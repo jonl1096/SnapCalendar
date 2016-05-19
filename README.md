@@ -4,5 +4,5 @@ This is an Android Application that allows the user to add an event to his/her c
 with the event info.  Uses the Tesseract ORC engine.
 
 Contributors:
-Calvin Giroud - eourcs
+Calvin Giroud - eourcs,
 Jonathan Liu - jonl1096
