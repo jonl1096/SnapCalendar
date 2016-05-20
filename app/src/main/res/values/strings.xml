@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SnapCalendar</string>
     <string name="camera_button_text">Take Photo</string>
+    <string name="filler_text">Text from photo will appear here</string>
 </resources>

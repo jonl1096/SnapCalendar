@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +55,14 @@ public class MainActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap photo = (Bitmap) extras.get("data");
             imageView.setImageBitmap(photo);
+            try {
+                String text = extractText(photo, "/mnt/sdcard/tesseract/tessdata/eng.traineddata");
+                TextView photoText = (TextView) findViewById(R.id.photoText);
+                photoText.setText(text);
+            } catch (Exception e) {
+                System.out.println("java.lang.Exception");
+            }
+
         }
     }
 

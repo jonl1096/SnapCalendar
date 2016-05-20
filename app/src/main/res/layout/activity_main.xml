@@ -9,10 +9,9 @@
         android:text="@string/camera_button_text"
         android:id="@+id/cameraButton"
         android:layout_gravity="center_horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="78dp"
-        android:onClick="launchCamera" />
+        android:onClick="launchCamera"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -23,4 +22,15 @@
         android:minWidth="300dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/photoText"
+        android:layout_below="@+id/cameraButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:layout_alignParentEnd="false"
+        android:text="@string/filler_text" />
 </RelativeLayout>
