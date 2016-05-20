@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Lauching the camera.
-    protected void launchCamera(View view) {
+    public void launchCamera(View view) {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         // Launch the cameraIntent, take the picture, and pass the results to onActivityResult
@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
             imageView.setImageBitmap(photo);
             try {
                 String text = extractText(photo, "/mnt/sdcard/tesseract/tessdata/eng.traineddata");
+                System.out.println("The photo text is: " + text);
+//                String text = "test text";
                 TextView photoText = (TextView) findViewById(R.id.photoText);
                 photoText.setText(text);
             } catch (Exception e) {
