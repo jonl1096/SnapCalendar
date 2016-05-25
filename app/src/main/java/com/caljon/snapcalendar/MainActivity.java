@@ -11,6 +11,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Align;
+import android.graphics.Paint.Style;
+
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,7 +50,24 @@ public class MainActivity extends AppCompatActivity {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         // Launch the cameraIntent, take the picture, and pass the results to onActivityResult
-        startActivityForResult(cameraIntent,  REQUEST_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+    }
+
+    private static Bitmap getTextImage(String text, int width, int height) {
+        final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        final Paint paint = new Paint();
+        final Canvas canvas = new Canvas(bmp);
+
+        canvas.drawColor(Color.WHITE);
+
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Style.FILL);
+        paint.setAntiAlias(true);
+        paint.setTextAlign(Align.CENTER);
+        paint.setTextSize(40.0f);
+        canvas.drawText(text, width / 2, height / 2, paint);
+
+        return bmp;
     }
 
     // Returning the image taken.
@@ -54,11 +77,16 @@ public class MainActivity extends AppCompatActivity {
             // Getting the photo
             Bundle extras = data.getExtras();
             Bitmap photo = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(photo);
+//            imageView.setImageBitmap(photo);
             try {
-                String text = extractText(photo, "/mnt/sdcard/tesseract/tessdata/eng.traineddata");
-                System.out.println("The photo text is: " + text);
+//                String text = extractText(photo, "/mnt/sdcard/tesseract/tessdata/eng.traineddata");
+//                String text = extractText(photo, "/mnt/sdcard/tesseract");
+                final String inputText = "hello";
+                final Bitmap bmp = getTextImage(inputText, 640, 480);
+                imageView.setImageBitmap(bmp);
+                String text = extractText(bmp);
 //                String text = "test text";
+                System.out.println("The photo text is: " + text);
                 TextView photoText = (TextView) findViewById(R.id.photoText);
                 photoText.setText(text);
             } catch (Exception e) {
@@ -69,10 +97,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO: Testing OCR functionality
-    private String extractText(Bitmap bitmap, String dataPath) throws Exception
+    private String extractText(Bitmap bitmap) throws Exception
     {
         TessBaseAPI tessBaseApi = new TessBaseAPI();
-        tessBaseApi.init(dataPath, "eng");
+        tessBaseApi.init("/mnt/sdcard/tesseract", "eng");
+        tessBaseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_LINE);
         tessBaseApi.setImage(bitmap);
         String extractedText = tessBaseApi.getUTF8Text();
         tessBaseApi.end();
