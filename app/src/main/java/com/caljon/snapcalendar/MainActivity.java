@@ -84,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 final String inputText = "hello";
                 final Bitmap bmp = getTextImage(inputText, 640, 480);
                 imageView.setImageBitmap(bmp);
-                String text = extractText(bmp);
+//                String text = extractText(bmp, "/mnt/sdcard/tesseract");
+                String text = extractText(bmp, "Evironment.getExternalStorageDirectory().getPath()");
 //                String text = "test text";
                 System.out.println("The photo text is: " + text);
                 TextView photoText = (TextView) findViewById(R.id.photoText);
@@ -97,10 +98,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO: Testing OCR functionality
-    private String extractText(Bitmap bitmap) throws Exception
+    private String extractText(Bitmap bitmap, String dataPath) throws Exception
     {
         TessBaseAPI tessBaseApi = new TessBaseAPI();
-        tessBaseApi.init("/mnt/sdcard/tesseract", "eng");
+        tessBaseApi.init(dataPath, "eng");
         tessBaseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_LINE);
         tessBaseApi.setImage(bitmap);
         String extractedText = tessBaseApi.getUTF8Text();
