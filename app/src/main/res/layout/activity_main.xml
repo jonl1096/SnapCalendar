@@ -2,36 +2,48 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--android:background="@drawable/sample">-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/camera_button_text"
-        android:id="@+id/cameraButton"
-        android:layout_gravity="center_horizontal"
-        android:onClick="launchCamera"
-        android:layout_below="@+id/imageView"
-        android:layout_centerHorizontal="true" />
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_marginTop="50dp"
-        android:minHeight="300dp"
-        android:minWidth="300dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+    <!--<fragment-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:name="com.caljon.snapcalendar.CameraIntentFragment"-->
+        <!--android:id="@+id/fragment"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_centerHorizontal="true" />-->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/photoText"
-        android:layout_below="@+id/cameraButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:layout_alignParentEnd="false"
-        android:text="@string/filler_text" />
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/camera_button_text"-->
+        <!--android:id="@+id/cameraButton"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:onClick="launchCamera"-->
+        <!--android:layout_below="@+id/imageView"-->
+        <!--android:layout_centerHorizontal="true" />-->
+
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/imageView"-->
+        <!--android:layout_marginTop="50dp"-->
+        <!--android:minHeight="300dp"-->
+        <!--android:minWidth="300dp"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_centerHorizontal="true" />-->
+
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+        <!--android:id="@+id/photoText"-->
+        <!--android:layout_below="@+id/cameraButton"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginTop="32dp"-->
+        <!--android:layout_alignParentEnd="false"-->
+        <!--android:text="@string/filler_text" />-->
 </RelativeLayout>

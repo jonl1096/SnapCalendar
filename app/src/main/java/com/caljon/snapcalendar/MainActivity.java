@@ -1,48 +1,91 @@
 package com.caljon.snapcalendar;
 
+import android.Manifest;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.support.v4.app.FragmentActivity;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
+import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements
+        CameraIntentFragment.CameraIntentListener {
+    // AppCompatActivity
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_CAMERA = 1;
 
-    ImageView imageView;
+    ImageView photoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button cameraButton = (Button) findViewById(R.id.cameraButton);
-        imageView = (ImageView) findViewById(R.id.imageView);
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.fragment_container) != null) {
 
-        // Disable the button if user has no camera
-        if (!hasCamera()) {
-            cameraButton.setEnabled(false);
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            CameraIntentFragment cameraIntentFragment = new CameraIntentFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            cameraIntentFragment.setArguments(getIntent().getExtras());
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, cameraIntentFragment).commit();
         }
-
     }
 
-    // Check if the user has a camera.
-    private boolean hasCamera() {
-        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     // Lauching the camera.
@@ -50,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         // Launch the cameraIntent, take the picture, and pass the results to onActivityResult
-        startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, REQUEST_CAMERA);
     }
 
     private static Bitmap getTextImage(String text, int width, int height) {
@@ -73,28 +116,46 @@ public class MainActivity extends AppCompatActivity {
     // Returning the image taken.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+        if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
             // Getting the photo
             Bundle extras = data.getExtras();
             Bitmap photo = (Bitmap) extras.get("data");
-//            imageView.setImageBitmap(photo);
+            photoView.setImageBitmap(photo);
             try {
 //                String text = extractText(photo, "/mnt/sdcard/tesseract/tessdata/eng.traineddata");
 //                String text = extractText(photo, "/mnt/sdcard/tesseract");
                 final String inputText = "hello";
                 final Bitmap bmp = getTextImage(inputText, 640, 480);
-                imageView.setImageBitmap(bmp);
+                photoView.setImageBitmap(bmp);
 //                String text = extractText(bmp, "/mnt/sdcard/tesseract");
                 String text = extractText(bmp, "Evironment.getExternalStorageDirectory().getPath()");
 //                String text = "test text";
-                System.out.println("The photo text is: " + text);
-                TextView photoText = (TextView) findViewById(R.id.photoText);
-                photoText.setText(text);
+//                TextView photoText = (TextView) findViewById(R.id.photoText);
+//                photoText.setText(text);
             } catch (Exception e) {
                 System.out.println("java.lang.Exception");
             }
 
         }
+
+//        // Create fragment and give it an argument specifying the article it should show
+//        PhotoViewFragment photoViewFragment = new PhotoViewFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(PhotoViewFragment.ARG_POSITION, position);
+//        photoViewFragment.setArguments(args);
+//
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//
+//        // Replace whatever is in the fragment_container view with this fragment,
+//        // and add the transaction to the back stack so the user can navigate back
+//        transaction.replace(R.id.fragment_container, photoViewFragment);
+//        transaction.addToBackStack("cameraintentfragment");
+//
+//        // Commit the transaction
+//        transaction.commit();
+
     }
 
     // TODO: Testing OCR functionality

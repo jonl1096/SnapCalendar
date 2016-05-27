@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">SnapCalendar</string>
     <string name="camera_button_text">Take Photo</string>
+    <string name="retake_button_text">Retake Photo</string>
     <string name="filler_text">Text from photo will appear here</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
