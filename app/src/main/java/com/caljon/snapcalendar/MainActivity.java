@@ -88,6 +88,8 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
+    // ===============================================================================================
+
     // Lauching the camera.
     public void launchCamera(View view) {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -116,45 +118,11 @@ public class MainActivity extends FragmentActivity implements
     // Returning the image taken.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("IN ACTIVITY ONACTIVITYRESULT");
+        System.out.println("first requestcode: " + requestCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("second requestcode: " + requestCode);
 
-        if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
-            // Getting the photo
-            Bundle extras = data.getExtras();
-            Bitmap photo = (Bitmap) extras.get("data");
-            photoView.setImageBitmap(photo);
-            try {
-//                String text = extractText(photo, "/mnt/sdcard/tesseract/tessdata/eng.traineddata");
-//                String text = extractText(photo, "/mnt/sdcard/tesseract");
-                final String inputText = "hello";
-                final Bitmap bmp = getTextImage(inputText, 640, 480);
-                photoView.setImageBitmap(bmp);
-//                String text = extractText(bmp, "/mnt/sdcard/tesseract");
-                String text = extractText(bmp, "Evironment.getExternalStorageDirectory().getPath()");
-//                String text = "test text";
-//                TextView photoText = (TextView) findViewById(R.id.photoText);
-//                photoText.setText(text);
-            } catch (Exception e) {
-                System.out.println("java.lang.Exception");
-            }
-
-        }
-
-//        // Create fragment and give it an argument specifying the article it should show
-//        PhotoViewFragment photoViewFragment = new PhotoViewFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(PhotoViewFragment.ARG_POSITION, position);
-//        photoViewFragment.setArguments(args);
-//
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//
-//        // Replace whatever is in the fragment_container view with this fragment,
-//        // and add the transaction to the back stack so the user can navigate back
-//        transaction.replace(R.id.fragment_container, photoViewFragment);
-//        transaction.addToBackStack("cameraintentfragment");
-//
-//        // Commit the transaction
-//        transaction.commit();
 
     }
 

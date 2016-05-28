@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,6 +20,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.googlecode.tesseract.android.TessBaseAPI;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,14 +32,14 @@ import android.widget.Toast;
 public class CameraIntentFragment extends Fragment {
 
 
-    public static final int REQUEST_CAMERA = 1;
+    public static final int REQUEST_CAMERA = 11;
 
-    ImageView imageView;
+    ImageView photoView;
 
     private CameraIntentListener mListener;
 
     public interface CameraIntentListener {
-        void launchCamera(View view);
+//        void launchCamera(View view);
 //        Bitmap getTextImage(String text, int width, int height);
 //        void onActivityResult(int requestCode, int resultCode, Intent data);
 //        String extractText(Bitmap bitmap, String dataPath);
@@ -68,7 +73,7 @@ public class CameraIntentFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_camera_intent, container, false);
         Button cameraButton = (Button) view.findViewById(R.id.cameraButton);
-//        imageView = (ImageView) view.findViewById(R.id.photoview);
+        photoView = (ImageView) view.findViewById(R.id.photoView);
 
         // Check permission for CAMERA
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
@@ -88,7 +93,7 @@ public class CameraIntentFragment extends Fragment {
         cameraButton.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
-                        buttonClicked(v);
+                        launchCamera(v);
                     }
                 }
         );
@@ -101,6 +106,97 @@ public class CameraIntentFragment extends Fragment {
         return view;
     }
 
+    // Lauching the camera.
+    public void launchCamera(View view) {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // Launch the cameraIntent, take the picture, and pass the results to onActivityResult
+        startActivityForResult(cameraIntent, REQUEST_CAMERA);
+    }
+
+    private static Bitmap getTextImage(String text, int width, int height) {
+        final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        final Paint paint = new Paint();
+        final Canvas canvas = new Canvas(bmp);
+
+        canvas.drawColor(Color.WHITE);
+
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setAntiAlias(true);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(40.0f);
+        canvas.drawText(text, width / 2, height / 2, paint);
+
+        return bmp;
+    }
+
+    // Returning the image taken.
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("IN ONACTIVITYRESULT");
+        System.out.println("requestCode: " + requestCode);
+        System.out.println("REQUEST_CAMERA: " + REQUEST_CAMERA);
+        System.out.println("resultCode: " + resultCode);
+        System.out.println("RESULT_OK: " + getActivity().RESULT_OK);
+
+
+
+        if (requestCode == REQUEST_CAMERA && resultCode == getActivity().RESULT_OK) {
+            // Getting the photo
+            Bundle extras = data.getExtras();
+            Bitmap photo = (Bitmap) extras.get("data");
+            photoView.setImageBitmap(photo);
+            System.out.println("JUST SET THE IMAGEVIEW");
+            try {
+//                String text = extractText(photo, "/mnt/sdcard/tesseract/tessdata/eng.traineddata");
+//                String text = extractText(photo, "/mnt/sdcard/tesseract");
+                final String inputText = "hello";
+                final Bitmap bmp = getTextImage(inputText, 640, 480);
+                photoView.setImageBitmap(bmp);
+
+//                String text = extractText(bmp, "/mnt/sdcard/tesseract");
+                String text = extractText(bmp, "Evironment.getExternalStorageDirectory().getPath()");
+//                String text = "test text";
+//                TextView photoText = (TextView) findViewById(R.id.photoText);
+//                photoText.setText(text);
+            } catch (Exception e) {
+                System.out.println("java.lang.Exception");
+            }
+
+        }
+
+//        // Create fragment and give it an argument specifying the article it should show
+//        PhotoViewFragment photoViewFragment = new PhotoViewFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(PhotoViewFragment.ARG_POSITION, position);
+//        photoViewFragment.setArguments(args);
+//
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//
+//        // Replace whatever is in the fragment_container view with this fragment,
+//        // and add the transaction to the back stack so the user can navigate back
+//        transaction.replace(R.id.fragment_container, photoViewFragment);
+//        transaction.addToBackStack("cameraintentfragment");
+//
+//        // Commit the transaction
+//        transaction.commit();
+
+    }
+
+    // TODO: Testing OCR functionality
+    private String extractText(Bitmap bitmap, String dataPath) throws Exception
+    {
+        TessBaseAPI tessBaseApi = new TessBaseAPI();
+        tessBaseApi.init(dataPath, "eng");
+        tessBaseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_LINE);
+        tessBaseApi.setImage(bitmap);
+        String extractedText = tessBaseApi.getUTF8Text();
+        tessBaseApi.end();
+        return extractedText;
+    }
+
 
 
     // Check if the user has a camera.
@@ -111,9 +207,9 @@ public class CameraIntentFragment extends Fragment {
     }
 
     // call this when the button is clicked
-    public void buttonClicked(View v) {
-        this.mListener.launchCamera(v);
-    }
+//    public void buttonClicked(View v) {
+//        this.mListener.launchCamera(v);
+//    }
 
     @Override
     public void onAttach(Context context) {
