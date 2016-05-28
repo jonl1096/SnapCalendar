@@ -1,6 +1,7 @@
 package com.caljon.snapcalendar;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -34,8 +41,9 @@ public class CameraIntentFragment extends Fragment {
 
     public static final int REQUEST_CAMERA = 11;
 
-    ImageView photoView;
-
+    private ImageView photoView;
+    private String mCurrentPhotoPath;
+    private ProgressDialog mProgressDialog;
     private CameraIntentListener mListener;
 
     public interface CameraIntentListener {
@@ -83,11 +91,6 @@ public class CameraIntentFragment extends Fragment {
             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.CAMERA},
                     MainActivity.REQUEST_CAMERA);
-        } else {
-            // permission has been granted, continue as usual
-
-            Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(captureIntent, 0);
         }
 
         cameraButton.setOnClickListener(
@@ -110,8 +113,41 @@ public class CameraIntentFragment extends Fragment {
     public void launchCamera(View view) {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        // Launch the cameraIntent, take the picture, and pass the results to onActivityResult
+
+//        File photoFile = null;
+//        try {
+//            photoFile = createImageFile();
+//        } catch (IOException ex) {
+//            // Error occurred while creating the File
+//
+//        }
+//        // Continue only if the File was successfully created
+//        if (photoFile != null) {
+//            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+//                    Uri.fromFile(photoFile));
+//            // Launch the cameraIntent, take the picture, and pass the results to onActivityResult
+//            startActivityForResult(cameraIntent, REQUEST_CAMERA);
+//        }
+
         startActivityForResult(cameraIntent, REQUEST_CAMERA);
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+                .format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        String storageDir = Environment.getExternalStorageDirectory()
+                + "/TessOCR";
+        File dir = new File(storageDir);
+        if (!dir.exists())
+            dir.mkdir();
+
+        File image = new File(storageDir + "/" + imageFileName + ".jpg");
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     private static Bitmap getTextImage(String text, int width, int height) {
@@ -153,13 +189,15 @@ public class CameraIntentFragment extends Fragment {
 //                String text = extractText(photo, "/mnt/sdcard/tesseract");
                 final String inputText = "hello";
                 final Bitmap bmp = getTextImage(inputText, 640, 480);
-                photoView.setImageBitmap(bmp);
+//                photoView.setImageBitmap(bmp);
 
-//                String text = extractText(bmp, "/mnt/sdcard/tesseract");
-                String text = extractText(bmp, "Evironment.getExternalStorageDirectory().getPath()");
+                String text = extractText(bmp, "/mnt/sdcard/");
+//                String text = extractText(bmp, "Evironment.getExternalStorageDirectory().getPath()");
 //                String text = "test text";
 //                TextView photoText = (TextView) findViewById(R.id.photoText);
 //                photoText.setText(text);
+            } catch (IOException e) {
+                System.out.println("java.lang.IOException");
             } catch (Exception e) {
                 System.out.println("java.lang.Exception");
             }
@@ -190,7 +228,6 @@ public class CameraIntentFragment extends Fragment {
     {
         TessBaseAPI tessBaseApi = new TessBaseAPI();
         tessBaseApi.init(dataPath, "eng");
-        tessBaseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_SINGLE_LINE);
         tessBaseApi.setImage(bitmap);
         String extractedText = tessBaseApi.getUTF8Text();
         tessBaseApi.end();

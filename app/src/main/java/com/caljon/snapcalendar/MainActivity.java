@@ -29,7 +29,7 @@ public class MainActivity extends FragmentActivity implements
         CameraIntentFragment.CameraIntentListener {
     // AppCompatActivity
 
-    static final int REQUEST_CAMERA = 1;
+    static final int REQUEST_CAMERA = 11;
 
     ImageView photoView;
 
@@ -121,6 +121,7 @@ public class MainActivity extends FragmentActivity implements
         System.out.println("IN ACTIVITY ONACTIVITYRESULT");
         System.out.println("first requestcode: " + requestCode);
         super.onActivityResult(requestCode, resultCode, data);
+
         System.out.println("second requestcode: " + requestCode);
 
 
