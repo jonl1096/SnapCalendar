@@ -30,6 +30,7 @@ public class MainActivity extends FragmentActivity implements
     // AppCompatActivity
 
     static final int REQUEST_CAMERA = 11;
+    static final int REQUEST_WRITE_EXTERNAL_STORAGE = 111;
 
     ImageView photoView;
 
