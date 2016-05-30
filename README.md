@@ -4,9 +4,9 @@ This is an Android Application that allows the user to add an event to his/her c
 with the event info.  Uses the Tesseract OCR engine.
 
 Contributors:
-Calvin Giroud - eourcs,
-Jonathan Liu - jonl1096,
-Nav Thakur
+- Calvin Giroud - eourcs
+- Jonathan Liu - jonl1096
+- Nav Thakur
 
 TODO:
 - fix issue that when app starts in portrait mode and picture is taken in landscape the file info gets messed up
