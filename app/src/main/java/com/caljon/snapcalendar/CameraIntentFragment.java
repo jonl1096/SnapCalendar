@@ -61,11 +61,11 @@ public class CameraIntentFragment extends Fragment {
     private String mDirPath = null;
     private static final String lang = "eng";
 
+    private String title, location, description, beginTime, endTime;
+
+    boolean allDay;
+
     public interface CameraIntentListener {
-//        void launchCamera(View view);
-//        Bitmap getTextImage(String text, int width, int height);
-//        void onActivityResult(int requestCode, int resultCode, Intent data);
-//        String extractText(Bitmap bitmap, String dataPath);
     }
 
     public CameraIntentFragment() {
@@ -161,7 +161,7 @@ public class CameraIntentFragment extends Fragment {
         if (requestCode == REQUEST_CAMERA && resultCode == getActivity().RESULT_OK) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 4; // 1 - means max size. 4 - means maxsize/4 size. Don't use value <4, because you need more memory in the heap to store your data.
-            Bitmap photo = BitmapFactory.decodeFile(outputFileUri.getPath(), options);
+//            Bitmap photo = BitmapFactory.decodeFile(outputFileUri.getPath(), options);
             prepareTesseract();
             startOCR(outputFileUri);
         } else {
@@ -290,6 +290,10 @@ public class CameraIntentFragment extends Fragment {
         }
         tessBaseAPI.end();
         return extractedText;
+    }
+
+    private void getEventInfo(String text) {
+
     }
 
     // Check if the user has a camera.
