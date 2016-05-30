@@ -8,6 +8,7 @@ Contributors:
 - Jonathan Liu - jonl1096
 - Nav Thakur
 
+
 TODO:
 - fix issue that when app starts in portrait mode and picture is taken in landscape the file info gets messed up
   and program doesn't work
