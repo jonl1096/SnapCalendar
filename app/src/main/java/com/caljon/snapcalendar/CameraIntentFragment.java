@@ -10,7 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -160,7 +162,6 @@ public class CameraIntentFragment extends Fragment {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 4; // 1 - means max size. 4 - means maxsize/4 size. Don't use value <4, because you need more memory in the heap to store your data.
             Bitmap photo = BitmapFactory.decodeFile(outputFileUri.getPath(), options);
-            photoView.setImageBitmap(photo);
             prepareTesseract();
             startOCR(outputFileUri);
         } else {
@@ -234,7 +235,6 @@ public class CameraIntentFragment extends Fragment {
         }
     }
 
-
     /**
      * don't run this code in main thread - it stops UI thread. Create AsyncTask instead.
      * http://developer.android.com/intl/ru/reference/android/os/AsyncTask.html
@@ -247,6 +247,9 @@ public class CameraIntentFragment extends Fragment {
             options.inSampleSize = 4; // 1 - means max size. 4 - means maxsize/4 size. Don't use value <4, because you need more memory in the heap to store your data.
             Bitmap bitmap = BitmapFactory.decodeFile(imgUri.getPath(), options);
 
+            bitmap = rotateImageIfRequired(bitmap, imgUri);
+
+            photoView.setImageBitmap(bitmap);
             result = extractText(bitmap);
             System.out.println(result);
             TextView textView = (TextView) getActivity().findViewById(R.id.textView);
@@ -289,23 +292,43 @@ public class CameraIntentFragment extends Fragment {
         return extractedText;
     }
 
-
-//    // TODO: Testing OCR functionality
-//    private String extractText(Bitmap bitmap, String dataPath) throws Exception
-//    {
-//        TessBaseAPI tessBaseApi = new TessBaseAPI();
-//        tessBaseApi.init(dataPath, lang);
-//        tessBaseApi.setImage(bitmap);
-//        String extractedText = tessBaseApi.getUTF8Text();
-//        tessBaseApi.end();
-//        return extractedText;
-//    }
-
     // Check if the user has a camera.
     private boolean hasCamera() {
         // Since this is a fragment and the .getPackageManager() method is from Context,
         // need to use getActivity()
         return getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+    /**
+     * Rotate an image if required.
+     *
+     * @param img           The image bitmap
+     * @param selectedImage Image URI
+     * @return The resulted Bitmap after manipulation
+     */
+    private static Bitmap rotateImageIfRequired(Bitmap img, Uri selectedImage) throws IOException {
+
+        ExifInterface ei = new ExifInterface(selectedImage.getPath());
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotateImage(img, 90);
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotateImage(img, 180);
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotateImage(img, 270);
+            default:
+                return img;
+        }
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
     }
 
     @Override
