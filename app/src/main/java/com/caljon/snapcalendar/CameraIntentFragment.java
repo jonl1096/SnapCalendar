@@ -16,6 +16,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.CalendarContract;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -37,6 +38,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 /**
@@ -61,9 +63,11 @@ public class CameraIntentFragment extends Fragment {
     private String mDirPath = null;
     private static final String lang = "eng";
 
-    private String title, location, description, beginTime, endTime;
+    private String title, location, description;
 
-    boolean allDay;
+    private int month, day, year, beginTime, endTime;
+
+    private boolean allDay;
 
     public interface CameraIntentListener {
     }
@@ -141,20 +145,6 @@ public class CameraIntentFragment extends Fragment {
         }
     }
 
-    private static Bitmap getTextImage(String text, int width, int height) {
-        final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Paint paint = new Paint();
-        final Canvas canvas = new Canvas(bmp);
-        canvas.drawColor(Color.WHITE);
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setAntiAlias(true);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setTextSize(40.0f);
-        canvas.drawText(text, width / 2, height / 2, paint);
-        return bmp;
-    }
-
     // Returning the image taken.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -163,10 +153,29 @@ public class CameraIntentFragment extends Fragment {
             options.inSampleSize = 4; // 1 - means max size. 4 - means maxsize/4 size. Don't use value <4, because you need more memory in the heap to store your data.
 //            Bitmap photo = BitmapFactory.decodeFile(outputFileUri.getPath(), options);
             prepareTesseract();
-            startOCR(outputFileUri);
+            String result = startOCR(outputFileUri);
+            getEventInfo(result);
+            addEventToCalendar();
         } else {
             Toast.makeText(getActivity(), "ERROR: Image was not obtained.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void addEventToCalendar() {
+        Intent calIntent = new Intent(Intent.ACTION_INSERT);
+        calIntent.setType("vnd.android.cursor.item/event");
+        calIntent.putExtra(CalendarContract.Events.TITLE, this.title);
+        calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, this.location);
+        calIntent.putExtra(CalendarContract.Events.DESCRIPTION, this.description);
+
+        GregorianCalendar calDate = new GregorianCalendar(2012, 7, 15);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                calDate.getTimeInMillis());
+        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                calDate.getTimeInMillis());
+
+        startActivity(calIntent);
     }
 
     /**
@@ -241,7 +250,7 @@ public class CameraIntentFragment extends Fragment {
      *
      * @param imgUri
      */
-    private void startOCR(Uri imgUri) {
+    private String startOCR(Uri imgUri) {
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 4; // 1 - means max size. 4 - means maxsize/4 size. Don't use value <4, because you need more memory in the heap to store your data.
@@ -254,10 +263,12 @@ public class CameraIntentFragment extends Fragment {
             System.out.println(result);
             TextView textView = (TextView) getActivity().findViewById(R.id.textView);
             textView.setText(result);
+            return result;
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+        return "String not found";
     }
 
     private String extractText(Bitmap bitmap) {
@@ -293,7 +304,7 @@ public class CameraIntentFragment extends Fragment {
     }
 
     private void getEventInfo(String text) {
-
+        // TODO
     }
 
     // Check if the user has a camera.
