@@ -65,9 +65,9 @@ public class CameraIntentFragment extends Fragment {
 
     private String title, location, description;
 
-    private int month, day, year, beginTime, endTime;
+    private int month, day, year, beginHour, beginMinute, endHour, endMinute;
 
-    private boolean allDay;
+    private boolean allDay = true;
 
     public interface CameraIntentListener {
     }
@@ -168,12 +168,20 @@ public class CameraIntentFragment extends Fragment {
         calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, this.location);
         calIntent.putExtra(CalendarContract.Events.DESCRIPTION, this.description);
 
-        GregorianCalendar calDate = new GregorianCalendar(2012, 7, 15);
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
-                calDate.getTimeInMillis());
-        calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
-                calDate.getTimeInMillis());
+        GregorianCalendar calDate = new GregorianCalendar(this.year, this.month, this.day,
+                this.beginHour, this.beginMinute);
+        if (this.allDay) {
+            calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+        } else {
+            calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                    calDate.getTimeInMillis());
+            calDate = new GregorianCalendar(this.year, this.month, this.day,
+                    this.endHour, this.endMinute);
+            calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                    calDate.getTimeInMillis());
+        }
+
+
 
         startActivity(calIntent);
     }
@@ -305,6 +313,7 @@ public class CameraIntentFragment extends Fragment {
 
     private void getEventInfo(String text) {
         // TODO
+
     }
 
     // Check if the user has a camera.
