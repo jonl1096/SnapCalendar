@@ -1,17 +1,12 @@
 package com.caljon.snapcalendar;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,15 +31,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CameraIntentFragment.OnFragmentInteractionListener} interface
+ * {@link CameraIntentFragment.CameraIntentListener} interface
  * to handle interaction events.
  */
 public class CameraIntentFragment extends Fragment {
@@ -313,6 +306,17 @@ public class CameraIntentFragment extends Fragment {
 
     private void getEventInfo(String text) {
         // TODO
+        this.allDay = false;
+        this.title = "Test Event";
+        this.description = "test description";
+        this.location = "test location";
+        this.year = 2016;
+        this.month = 6;
+        this.day = 4;
+        this.beginHour = 11;
+        this.beginMinute = 0;
+        this.endHour = 12;
+        this.endMinute = 0;
 
     }
 
