@@ -50,10 +50,7 @@ public class CameraIntentFragment extends Fragment {
     private TessBaseAPI tessBaseAPI;
 
     private ImageView photoView;
-//    private String mCurrentPhotoPath;
     Uri outputFileUri;
-    private CameraIntentListener mListener;
-    private String mDirPath = null;
     private static final String lang = "eng";
 
     private String title, location, description;
@@ -61,6 +58,7 @@ public class CameraIntentFragment extends Fragment {
     private int month, day, year, beginHour, beginMinute, endHour, endMinute;
 
     private boolean allDay = true;
+    private CameraIntentListener mListener;
 
     public interface CameraIntentListener {
     }
@@ -311,6 +309,7 @@ public class CameraIntentFragment extends Fragment {
         this.description = "test description";
         this.location = "test location";
         this.year = 2016;
+        // NOTE: months go from 0 to 11, ie 6 = july
         this.month = 6;
         this.day = 4;
         this.beginHour = 11;
@@ -377,25 +376,6 @@ public class CameraIntentFragment extends Fragment {
     }
 
 }
-
-//    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-//     * @return A new instance of fragment CameraIntentFragment.
-//     */
-//    // TODO: Rename and change types and number of parameters
-//    public static CameraIntentFragment newInstance(String param1, String param2) {
-//        CameraIntentFragment fragment = new CameraIntentFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
 
 //        // Create fragment and give it an argument specifying the article it should show
 //        PhotoViewFragment photoViewFragment = new PhotoViewFragment();
