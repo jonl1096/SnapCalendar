@@ -10,6 +10,8 @@ Contributors:
 
 
 TODO:
+- put tesseract processing in an AsyncTask
+- add progressbar for tesseract processing
 - fix issue that when app starts in portrait mode and picture is taken in landscape the file info gets messed up
   and program doesn't work
   - has something to do with when the program changes orientation, the activity is destroyed and recreated
