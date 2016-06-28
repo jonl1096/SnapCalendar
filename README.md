@@ -5,6 +5,7 @@ with the event info.  Uses the Tesseract OCR engine.
 
 Contributors:
 - Calvin Giroud - eourcs
+- Nirmal Krishnan - nkrishn9
 - Jonathan Liu - jonl1096
 - Nav Thakur - nthakur34
 
